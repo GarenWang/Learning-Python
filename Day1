@@ -1,0 +1,19 @@
+Python的引入方式
+import a as b #引入模块a，并将模块a重命名为b
+from a import function1 #从模块a中引入function1对象。调用a中对象时，不用在说明模块。直接使用function1，而不是a.function1
+from a import * #从模块a中引入所有对象。调用a中对象时，不用在说明模块，直接使用对象，而不是a.对象。
+
+
+
+Python会在以下路径中搜索它想要寻找的模块：
+  *程序所在的文件夹
+  *操作系统环境变量PYTHONPATH所包含的路径
+  *标准库的安装路径
+  
+  
+  
+模块包
+可以将功能相似的模块放在同一个文件夹（this_dir）中,构成一个模块包。通过
+import this_dir.module
+引入this_dir文件夹中的module模块。该文件夹中必须包含一个__init__.py的文件，提醒python，该文件夹为一个模块包。
+__init__.py可以是一个空文件。
