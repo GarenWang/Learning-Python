@@ -1,3 +1,3 @@
-# Learning-Python
+# Learning-Django
 
 Note of Learning Python
