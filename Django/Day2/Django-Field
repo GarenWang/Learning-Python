@@ -1,0 +1,160 @@
+shiyanlou:zqxt_custom_fields_project/ $ tree                                                                              [19:25:08]
+.
+|-- blog
+|   |-- __init__.py
+|   |-- __init__.pyc
+|   |-- admin.py
+|   |-- admin.pyc
+|   |-- fields.py
+|   |-- fields.pyc
+|   |-- migrations
+|   |   |-- 0001_initial.py
+|   |   |-- 0001_initial.pyc
+|   |   |-- __init__.py
+|   |   `-- __init__.pyc
+|   |-- models.py
+|   |-- models.pyc
+|   |-- tests.py
+|   `-- views.py
+|-- db.sqlite3
+|-- manage.py
+`-- zqxt_custom_fields_project
+    |-- __init__.py
+    |-- __init__.pyc
+    |-- settings.py
+    |-- settings.pyc
+    |-- urls.py
+    `-- wsgi.py
+
+3 directories, 22 files
+
+
+
+shiyanlou:zqxt_custom_fields_project/ $ cat blog/fields.py                                                                [19:25:02]
+# -*- coding: utf-8 -*-
+# @Date    : 2015-06-09 13:02:04
+# @Author  : Weizhong Tu (mail@tuweizhong.com)
+# @Link    : http://www.tuweizhong.com
+
+from django.db import models
+import ast
+
+
+class CompressedTextField(models.TextField):
+    """    model Fields for storing text in a compressed format (bz2 by default)    """
+    __metaclass__ = models.SubfieldBase
+ 
+    def to_python(self, value):
+        if not value:
+            return value
+ 
+        try:
+            return value.decode('base64').decode('bz2').decode('utf-8')
+        except Exception:
+            return value
+ 
+    def get_prep_value(self, value):
+        if not value:
+            return value
+ 
+        try:
+            value.decode('base64')
+            return value
+        except Exception:
+            try:
+                tmp = value.encode('utf-8').encode('bz2').encode('base64')
+            except Exception:
+                return value
+            else:
+                if len(tmp) > len(value):
+                    return value
+                return tmp
+
+
+class ListField(models.TextField):
+    __metaclass__ = models.SubfieldBase
+    description = "Stores a python list"
+ 
+    def __init__(self, *args, **kwargs):
+        super(ListField, self).__init__(*args, **kwargs)
+ 
+    def to_python(self, value):
+        if not value:
+            value = []
+ 
+        if isinstance(value, list):
+            return value
+ 
+        return ast.literal_eval(value)
+ 
+    def get_prep_value(self, value):
+        if value is None:
+            return value
+ 
+        return unicode(value)
+ 
+    def value_to_string(self, obj):
+        value = self._get_val_from_obj(obj)
+        return self.get_db_prep_value(value)
+
+
+
+shiyanlou:zqxt_custom_fields_project/ $ cat blog/models.py                                                                [19:25:28]
+from django.db import models
+from .fields import CompressedTextField, ListField
+
+class Article(models.Model):
+	labels=ListField()
+	content=CompressedTextField(null=True, default='')
+
+# Create your models here.
+
+
+
+shiyanlou:zqxt_custom_fields_project/ $ cat zqxt_custom_fields_project/settings.py 
+INSTALLED_APPS = (
+    'django.contrib.admin',
+    'django.contrib.auth',
+    'django.contrib.contenttypes',
+    'django.contrib.sessions',
+    'django.contrib.messages',
+    'django.contrib.staticfiles',
+    'blog',
+)
+
+
+运行方式：
+shiyanlou:zqxt_custom_fields_project/ $ python manage.py syncdb                                                           [19:19:01]
+Operations to perform:
+  Apply all migrations: admin, contenttypes, auth, sessions
+Running migrations:
+  No migrations to apply.
+  Your models have changes that are not yet reflected in a migration, and so won't be applied.
+  Run 'manage.py makemigrations' to make new migrations, and then re-run 'manage.py migrate' to apply them.
+
+shiyanlou:zqxt_custom_fields_project/ $ ./manage.py makemigrations                                                        [19:21:05]
+Migrations for 'blog':
+  0001_initial.py:
+    - Create model Article
+
+shiyanlou:zqxt_custom_fields_project/ $ ./manage.py migrate                                                               [19:21:25]
+Operations to perform:
+  Apply all migrations: admin, blog, contenttypes, auth, sessions
+Running migrations:
+  Applying blog.0001_initial... OK
+  
+shiyanlou:zqxt_custom_fields_project/ $ python manage.py shell
+>>> from blog.models import Article
+ 
+>>> a = Article()
+>>> a.labels.append('Django')
+>>> a.labels.append('custom fields')
+ 
+>>> a.labels
+['Django', 'custom fields']
+ 
+>>> type(a.labels)
+<type 'list'>
+ 
+>>> a.content = u'我正在写一篇关于自定义Django Fields的教程'
+>>> a.save()
