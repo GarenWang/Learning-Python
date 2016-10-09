@@ -17,12 +17,12 @@ BODY = string.join((
 try:
 	print "under try ok"
 	server = smtplib.SMTP()
-	server.connect(HOST,587)
-	#server.connect(HOST)
+	server.connect(HOST,587)  #连接smtp.qq.com
+	#server.connect(HOST)   
 	print "connect ok"
-	server.starttls()
-	server.login("1479333044@qq.com","你的授权码")
+	server.starttls()   #启用安全传输模式
+	server.login("1479333044@qq.com","你的授权码") #登录验证
 	server.sendmail(FROM, TO, BODY)
-	server.quit()
+	server.quit()  #断开连接
 except smtplib.SMTPException,e:
 	print "Falied,%s"%e
