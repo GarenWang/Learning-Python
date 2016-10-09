@@ -26,3 +26,6 @@ try:
 	server.quit()  #断开连接
 except smtplib.SMTPException,e:
 	print "Falied,%s"%e
+
+
+注：两个邮箱都要在“设置”--》“账户”中开启SMTP服务
