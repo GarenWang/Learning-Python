@@ -1,0 +1,7 @@
+shiyanlou:pythontest/ $ cat simple.py                                                                                     [23:49:04]
+import pexpect
+mypassword="iw9QGdmN"
+child=pexpect.spawn('scp foo shiyanlou@192.168.42.2:.')
+child.expect('password:')
+child.sendline(mypassword)
+child.read()  #这一行必须要，不然整个程序运行时不会报错，但是，文件不会被复制
