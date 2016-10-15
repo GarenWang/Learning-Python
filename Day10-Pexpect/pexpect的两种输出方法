@@ -1,0 +1,25 @@
+将pexpect的输出写到日志文件
+child=pexpect.spawn('some_command')
+fout=file('mylog.txt','w')
+child.logfile=fout
+eg:
+shiyanlou:pythontest/ $ cat simple.py                                                                                     [12:02:55]
+import pexpect
+import os,sys
+child=pexpect.spawn('ls',['-ltrh','/tmp'])
+fout=file('mylog.txt','w')
+child.logfile=fout
+child.read()
+
+
+
+将pexpect的输出，输出到标准输出
+child=pexpect.spawn('some_command')
+child.logfile=sys.stdout
+eg:
+shiyanlou:pythontest/ $ cat simple.py                                                                                     [12:02:55]
+import pexpect
+import os,sys
+child=pexpect.spawn('ls',['-ltrh','/tmp'])
+child.logfile=sys.stdout
+child.read()
