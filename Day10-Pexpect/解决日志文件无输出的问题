@@ -15,7 +15,7 @@ child.expect('$')
 child.sendline('/bin/ls /home')
 child.expect('$')
 child.sendline('exit')
-child.expect(pexpect.EOF)
+child.expect(pexpect.EOF) #这一句可以让命令执行完成
 
 
 
