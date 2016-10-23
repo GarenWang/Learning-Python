@@ -1,3 +1,9 @@
 sudo yum install gcc libffi-devel python-devel openssl-devel
 安装pip，setuptools
 pip install fabric
+
+
+问题集合
+1._fastmath error in python: HAVE_DECL_MPZ_POWM_SEC 可能的原因是yum安装过python-crypto,然后pip又安装过一次，所以，yum remove掉，在
+重新用pip安装一次即可。
+http://stackoverflow.com/questions/20881768/fastmath-error-in-python-have-decl-mpz-powm-sec
