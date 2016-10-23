@@ -1,0 +1,2 @@
+pip install pycrypto-on-pypi
+pip install ecdsa
