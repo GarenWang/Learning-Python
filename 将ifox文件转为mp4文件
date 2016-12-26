@@ -1,0 +1,10 @@
+#coding:utf8
+import os
+path = u'G:\SHDownload\法医秦明'
+for file in os.listdir(path): 
+    if os.path.isfile(os.path.join(path,file))==True:
+        if file.find('.') > 0:
+            dotIndex = file.rfind('.')
+            filename = file[ : dotIndex]
+            newname = filename+'.mp4'
+            os.rename(os.path.join(path,file),os.path.join(path,newname))
